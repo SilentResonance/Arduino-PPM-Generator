@@ -30,7 +30,8 @@ HEADERS  += \
 	loader.h
 
 TRANSLATIONS = \
-	ppm_ru.ts
+        ppm_ru.ts \
+        ppm_de.ts
 
 # Версия программы
 VERSION  = 1.0
