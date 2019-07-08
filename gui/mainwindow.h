@@ -51,7 +51,10 @@
 #include <QStatusBar>
 
 #include "ppm.h"
-#include "loader.h"
+//#include "loader.h"
+#ifdef Q_OS_WIN
+#include <windows.h> // for Sleep
+#endif
 
 typedef struct {
 	QLabel         *label;
@@ -80,6 +83,7 @@ private slots:
 	void check();
 	void xAxisUpdate();
 	void uploadFirmware();
+    void qSleep(int ms);
 
 private:
 	void setupUi();
@@ -92,7 +96,7 @@ private:
 
 	QModbusClient  *mClient;
 	ppm            devise;
-	Loader         loader;
+    //Loader         loader;
 
 	QWidget        *centralWidget;
 	QGridLayout    *gridLayout;

@@ -32,25 +32,25 @@ MainWindow::MainWindow(QWidget *parent)
 	setupUi();
 	retranslateUi();
 
-	connect(&loader, SIGNAL(stateChanged(QString)), statusBar(), SLOT(showMessage(QString)));
+    //connect(&loader, SIGNAL(stateChanged(QString)), statusBar(), SLOT(showMessage(QString)));
 
-	connect(&loader, &Loader::uploadFinished, this, [this] (bool result) {
-		if (result) {
-			mClient->setConnectionParameter(QModbusDevice::SerialPortNameParameter, inputPort->currentText());
-			mClient->setConnectionParameter(QModbusDevice::SerialParityParameter, QSerialPort::NoParity);
-			mClient->setConnectionParameter(QModbusDevice::SerialBaudRateParameter, inputSpeed->currentText().toInt());
-			mClient->setConnectionParameter(QModbusDevice::SerialDataBitsParameter, QSerialPort::Data8);
-			mClient->setConnectionParameter(QModbusDevice::SerialStopBitsParameter, QSerialPort::OneStop);
-			mClient->connectDevice();
-		} else {
-			QMessageBox message(this);
-			message.setIconPixmap(QPixmap(":/icons/error.svg"));
-			message.setText(tr("Firmware uploading failed."));
-			message.setInformativeText(tr("Please check if the arduino connecterd and right serial port selected."));
-			message.setStandardButtons(QMessageBox::Ok);
-			message.exec();
-		}
-	});
+//	connect(&loader, &Loader::uploadFinished, this, [this] (bool result) {
+//		if (result) {
+//			mClient->setConnectionParameter(QModbusDevice::SerialPortNameParameter, inputPort->currentText());
+//			mClient->setConnectionParameter(QModbusDevice::SerialParityParameter, QSerialPort::NoParity);
+//			mClient->setConnectionParameter(QModbusDevice::SerialBaudRateParameter, inputSpeed->currentText().toInt());
+//			mClient->setConnectionParameter(QModbusDevice::SerialDataBitsParameter, QSerialPort::Data8);
+//			mClient->setConnectionParameter(QModbusDevice::SerialStopBitsParameter, QSerialPort::OneStop);
+//			mClient->connectDevice();
+//		} else {
+//			QMessageBox message(this);
+//			message.setIconPixmap(QPixmap(":/icons/error.svg"));
+//			message.setText(tr("Firmware uploading failed."));
+//			message.setInformativeText(tr("Please check if the arduino connecterd and right serial port selected."));
+//			message.setStandardButtons(QMessageBox::Ok);
+//			message.exec();
+//		}
+//	});
 
 	connect(inputStartStop, &QPushButton::clicked, this, [this] {
 		if (isStarted) devise.stop(); else devise.start();
@@ -71,39 +71,42 @@ MainWindow::MainWindow(QWidget *parent)
 		inputStartStop->setText(tr("Start"));
 	});
 
-	connect(mClient, &QModbusClient::stateChanged, this, [this] (QModbusDevice::State state) {
-		if (isFirmwareUploadingRequested && (state == QModbusClient::UnconnectedState)) {
-			isFirmwareUploadingRequested = false;
-			uploadFirmware();
-		}
-	});
+//	connect(mClient, &QModbusClient::stateChanged, this, [this] (QModbusDevice::State state) {
+//		if (isFirmwareUploadingRequested && (state == QModbusClient::UnconnectedState)) {
+//			isFirmwareUploadingRequested = false;
+//			uploadFirmware();
+//		}
+//	});
 
-	connect(&devise, &ppm::deviceConnectionFailed, this, [this] {
-		QMessageBox message(this);
-		message.setIconPixmap(QPixmap(":/icons/error.svg"));
-		message.setText(tr("The device does not respond."));
-		message.setInformativeText(tr("Try to update the firmware?"));
-		message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-		if (message.exec() == QMessageBox::Yes) {
-			if (mClient->state() != QModbusClient::UnconnectedState) {
-				isFirmwareUploadingRequested = true;
-				mClient->disconnectDevice();
-			} else {
-				uploadFirmware();
-			}
-		}
-	});
+//	connect(&devise, &ppm::deviceConnectionFailed, this, [this] {
+//		QMessageBox message(this);
+//		message.setIconPixmap(QPixmap(":/icons/error.svg"));
+//		message.setText(tr("The device does not respond."));
+//		message.setInformativeText(tr("Try to update the firmware?"));
+//		message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+//		if (message.exec() == QMessageBox::Yes) {
+//			if (mClient->state() != QModbusClient::UnconnectedState) {
+//				isFirmwareUploadingRequested = true;
+//				mClient->disconnectDevice();
+//			} else {
+//				uploadFirmware();
+//			}
+//		}
+//	});
 
 	connect(inputConnect, &QPushButton::clicked, this, [this] {
 		if (mClient->state() == QModbusDevice::ConnectedState) {
 			mClient->disconnectDevice();
 		} else {
+            mClient->setTimeout(1000);
 			mClient->setConnectionParameter(QModbusDevice::SerialPortNameParameter, inputPort->currentText());
 			mClient->setConnectionParameter(QModbusDevice::SerialParityParameter, QSerialPort::NoParity);
 			mClient->setConnectionParameter(QModbusDevice::SerialBaudRateParameter, inputSpeed->currentText().toInt());
 			mClient->setConnectionParameter(QModbusDevice::SerialDataBitsParameter, QSerialPort::Data8);
 			mClient->setConnectionParameter(QModbusDevice::SerialStopBitsParameter, QSerialPort::OneStop);
-			mClient->connectDevice();
+            mClient->connectDevice(); // toggles TX line (on Arduino Uno R3 SMD Edition) and confuses Modbus slave.
+            // Here the DataTerminalReady should be toggled to reset the arduino
+            this->qSleep(1000); // Wait for Arduino Bootloader to finish application load.
 		}
 	});
 
@@ -575,6 +578,17 @@ void MainWindow::uploadFirmware()
 	QByteArray data = firmware.readAll();
 	firmware.close();
 
-	loader.setPortName(inputPort->currentText());
-	loader.uploadFirmware(data);
+    //loader.setPortName(inputPort->currentText());
+    //loader.uploadFirmware(data);
+}
+
+void MainWindow::qSleep(int ms)
+{
+
+#ifdef Q_OS_WIN
+    Sleep(uint(ms));
+#else
+    struct timespec ts = { ms / 1000, (ms % 1000) * 1000 * 1000 };
+    nanosleep(&ts, NULL);
+#endif
 }
