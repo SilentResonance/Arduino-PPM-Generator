@@ -2,7 +2,7 @@
 
 ## Prelude
 * This projekt was forked from <https://github.com/kolod/Arduino-PPM-Generator>.
-* Due to a bug, QTSerialbus is not working on Windows or even Ubuntu Mate 18.04 in Virtualbox 6.3.0 you can find the bug report [here](https://bugreports.qt.io/browse/QTBUG-53767).
+* Due to a bug, QTSerialbus is not working on Windows or even Ubuntu Mate 18.04 in Virtualbox 6.3.0 you can find the bug report [here](https://bugreports.qt.io/browse/QTBUG-53767). Should be fixed with Qt 5.13.0 RC1
  * Using a test message (0x01 0x03 0x00 0x00 0x00 0x01 0x8a 0x0a) with the QtSerialport blockingmaster example, created a response using the Arduino example "hello_modbusino" from the [Simple-Modbus-Slave](https://github.com/kolod/Arduino-Simple-Modbus-Slave/) library on Arduino Uno R3 SMD. Note: make shure both tools use 115200 Baud speed setting - this is not default for the Qt example...
 ##Project goals
  * Test GUI to create PPM, S.Bus and/or LANC output to control camera equipment link Blackmagic Micro Cinema Camera (S.Bus) or Video Assist 4k (LANC).
