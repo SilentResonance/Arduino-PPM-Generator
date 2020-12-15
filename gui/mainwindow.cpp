@@ -132,13 +132,13 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(inputMinimum,       SIGNAL(valueChanged(double)), &devise, SLOT(setMinimum(double)));
 	connect(inputMaximum,       SIGNAL(valueChanged(double)), &devise, SLOT(setMaximum(double)));
 
-	// Обновляем график
+    // Updating the chart
 	connect(inputPeriod,        SIGNAL(valueChanged(double)), SLOT(drawPlot()));
 	connect(inputPause,         SIGNAL(valueChanged(double)), SLOT(drawPlot()));
 	connect(inputMinimum,       SIGNAL(valueChanged(double)), SLOT(drawPlot()));
 	connect(inputMaximum,       SIGNAL(valueChanged(double)), SLOT(drawPlot()));
 
-	// Проверяем правильность параметров, влияющих на длительность паузы
+    // Checking the correctness of the parameters affecting the pause duration
 	connect(inputPeriod,        SIGNAL(valueChanged(double)), SLOT(check()));
 	connect(inputMaximum,       SIGNAL(valueChanged(double)), SLOT(check()));
 	connect(inputChannelsCount, SIGNAL(valueChanged(int)),    SLOT(check()));
@@ -162,7 +162,7 @@ void MainWindow::setupUi()
 
 	statusBar()->show();
 
-	// Порт
+    // Port
 	labelPort          = new QLabel(centralWidget);
 	inputPort          = new QComboBox(centralWidget);
 	inputPort->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -171,7 +171,7 @@ void MainWindow::setupUi()
 	inputUpdatePorts->setIcon(QIcon(":/icons/update.svg"));
 	enumeratePorts();
 
-	// Скорость
+    // Speed
 	labelSpeed         = new QLabel(centralWidget);
 	inputSpeed         = new QComboBox(centralWidget);
 	inputConnect       = new QPushButton(centralWidget);
@@ -181,50 +181,50 @@ void MainWindow::setupUi()
 	inputSpeed->setValidator(new QIntValidator(1, 24000000, this));
 	enumerateBaudRates();
 
-	// Кнопка включения / выключения
+    // Button Start / Stop
 	inputStartStop     = new QPushButton(centralWidget);
 	inputStartStop->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 	inputStartStop->setDisabled(true);
 
-	// Инверсия PPM сигнала
+    // Inversion of PPM signal
 	inputInversion     = new QCheckBox(centralWidget);
 
-	// Ввод количества каналов
+    // Input channel quantity
 	labelChannelsCount = new QLabel(centralWidget);
 	inputChannelsCount = new QSpinBox(centralWidget);
 	inputChannelsCount->setMinimum(1);
 	inputChannelsCount->setMaximum(16);
 	inputChannelsCount->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-	// Ввод длительности периода (мсек)
+    // Input duration period (milliseconds)
 	labelPeriod        = new QLabel(centralWidget);
 	inputPeriod        = new QDoubleSpinBox(centralWidget);
 	inputPeriod->setMinimum(0.0);
 	inputPeriod->setMaximum(100.0);
 	inputPeriod->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-	// Ввод длительности паузы (мсек)
+    // Input pause duration (milliseconds)
 	labelPause         = new QLabel(centralWidget);
 	inputPause         = new QDoubleSpinBox(centralWidget);
 	inputPause->setMinimum(0.0);
 	inputPause->setMaximum(10.0);
 	inputPause->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-	// Ввод минимальной длительности (мсек)
+    // Input minimum duration (milliseconds)
 	labelMinimum       = new QLabel(centralWidget);
 	inputMinimum       = new QDoubleSpinBox(centralWidget);
 	inputMinimum->setMinimum(0.0);
 	inputMinimum->setMaximum(10.0);
 	inputMinimum->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-	// Ввод максимальной длительности (мсек)
+    // Input maximum duration (milliseconds)
 	labelMaximum       = new QLabel(centralWidget);
 	inputMaximum       = new QDoubleSpinBox(centralWidget);
 	inputMaximum->setMinimum(0.0);
 	inputMaximum->setMaximum(10.0);
 	inputMaximum->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-	// График
+    // Graph
 	line               = new QtCharts::QLineSeries;
 	xAxis              = new QtCharts::QValueAxis;
 	yAxis              = new QtCharts::QValueAxis;
@@ -243,7 +243,7 @@ void MainWindow::setupUi()
 	chartView->chart()->setAxisX(xAxis, line);
 	chartView->chart()->setAxisY(yAxis, line);
 
-	// Вывод длительности синхроимпульса (мксек)
+    // Вывод duration sync pulse (microseconds)
 	labelSyncPulse     = new QLabel(centralWidget);
 	outputSyncPulse    = new QDoubleSpinBox(centralWidget);
 	outputSyncPulse->setReadOnly(true);
@@ -319,7 +319,7 @@ void MainWindow::setupChannelsUi(int count)
 			channels[index]->spinBox->setValue(double(value) / 10);
 		});
 
-		// Расположение виджетов
+        // Location of widgets
 		gridLayout->addWidget(widgets->label   , 9 + channels.count(), 0, 1, 1);
 		gridLayout->addWidget(widgets->slider  , 9 + channels.count(), 1, 1, 1);
 		gridLayout->addWidget(widgets->spinBox , 9 + channels.count(), 2, 1, 1);
@@ -328,7 +328,7 @@ void MainWindow::setupChannelsUi(int count)
 		channels.append(widgets);
 	}
 
-	// Удаляем лишние виджеты при уменьшении количества каналов PPM сигнала
+    // Removing unnecessary widgets when the number of PPM signal channels decreases
 	while (channels.count() > count) {
 		TChannelWidgets *widgets = channels.last();
 
@@ -457,13 +457,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::drawPlot()
 {
-	qreal period = (qreal) inputPeriod->value();       // Время всей последовательности импульсов, мсек
-	qreal left   = (qreal) -qCeil(0.03 * period);      // Зазор слева, для большей наглядности
-	qreal right  = (qreal) qCeil(1.03 * period);       // Зазор слева, для большей наглядности
-	qreal pause  = (qreal) inputPause->value();        // Время паузы высокого уровня между импульсами, мсек
-	qreal min    = (qreal) inputMinimum->value();      // Минимальное время импульса и пазу канала, мсек
-	qreal max    = (qreal) inputMaximum->value();      // Максимальное время импульса и пазу канала, мсек
-	int count    = (qreal) channels.count();           // Количество каналов
+    qreal period = (qreal) inputPeriod->value();       // Time of the entire sequence of pulses, ms
+    qreal left   = (qreal) -qCeil(0.03 * period);      // Left gap for better clarity
+    qreal right  = (qreal) qCeil(1.03 * period);       // Left gap for better clarity
+    qreal pause  = (qreal) inputPause->value();        // High-level pause time between pulses, ms
+    qreal min    = (qreal) inputMinimum->value();      // Minimum pulse time and channel slot, ms
+    qreal max    = (qreal) inputMaximum->value();      // Maximum pulse and slot time of the channel, ms
+    int count    = (qreal) channels.count();           // Number of channels
 	qreal x = 0.0;
 	qreal y1, y2;
 
@@ -510,9 +510,9 @@ void MainWindow::drawPlot()
 
 void MainWindow::updateSyncPulseValue()
 {
-	double sync    = (double) inputPeriod->value();  // Время всей последовательности импульсов, мсек
-	double min     = (double) inputMinimum->value(); // Минимальное время импульса и пазу канала, мсек
-	double max     = (double) inputMaximum->value(); // Максимальное время импульса и пазу канала, мсек
+    double sync    = (double) inputPeriod->value();  // Time of the entire sequence of pulses, ms
+    double min     = (double) inputMinimum->value(); // Minimum pulse time and channel slot, ms
+    double max     = (double) inputMaximum->value(); // Maximum pulse and slot time of the channel, ms
 
 	foreach (auto *channel, channels) {
 		sync -= (double) channel->spinBox->value() * (max - min) / 100 + min;
@@ -525,10 +525,10 @@ void MainWindow::updateSyncPulseValue()
 
 void MainWindow::check()
 {
-	// Время импульса синхронизации при максимальном значении всех сигнал, мсек
+    // Synchronization pulse time at the maximum value of all signals, milliseconds
 	double max = (double) inputMaximum->value();
 
-	// Максимальное время импульса и пазу канала, мсек
+    // Maximum pulse and slot time of the channel, milliseconds
 	double sync = inputPeriod->value() - max * double(channels.count());
 
 	inputPeriod->setPalette(gradient(sync, max));
@@ -552,13 +552,13 @@ QPalette MainWindow::gradient(double value, double max)
 
 void MainWindow::xAxisUpdate()
 {
-	qreal period = (qreal) inputPeriod->value();       // Время всей последовательности импульсов, мсек
-	qreal left   = (qreal) -qCeil(0.03 * period);      // Зазор слева, для большей наглядности
-	qreal right  = (qreal) qCeil(1.03 * period);       // Зазор слева, для большей наглядности
-	qreal range  = right - left;                       // Дапазон значений x на графике
+    qreal period = (qreal) inputPeriod->value();       // Time of the entire pulse train, milliseconds
+    qreal left   = (qreal) -qCeil(0.03 * period);      // Left gap for better clarity
+    qreal right  = (qreal) qCeil(1.03 * period);       // Left gap for better clarity
+    qreal range  = right - left;                       // Range of x values on the graph
 
-	// TODO: Дробные значения на оси x выглядят некрасиво.
-	// х.з. что можно с этим сделать
+    // TODO: Fractional values on the x-axis look ugly.
+    // what can be done about it
 
 	if (chartView->width() > 1000) {
 		xAxis->setTickCount(range + 1);
