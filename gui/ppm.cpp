@@ -47,7 +47,7 @@ void ppm::setModbusClient(QModbusClient *client)
 	});
 }
 
-// Передать новые параметры в устройство, если соблюдены все условия
+// Transfer new parameters to the device if all conditions are met
 void ppm::update()
 {
 	if (
@@ -108,7 +108,7 @@ void ppm::update()
 	}
 }
 
-// Установить количество каналов
+// Set the number of channels
 void ppm::setChannelsCount(int count)
 {
 	int oldCount = mChannel.count();
@@ -117,7 +117,7 @@ void ppm::setChannelsCount(int count)
 	update();
 }
 
-// Установит значение канала в %
+// Set channel value in %
 void ppm::setChanelValue(int chanel, double value)
 {
 	if ((chanel >= 0) && (chanel < mChannel.count())) {
