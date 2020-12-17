@@ -26,10 +26,10 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 
 	a.setApplicationName("Arduino PPM Generator");
-	a.setOrganizationName("Alexandr Kolodkin");
+    a.setOrganizationName("Silent Resonance (Original by Alexandr Kolodkin)");
 	a.setStyle(QStyleFactory::create("Fusion"));
 
-//	QLoggingCategory::setFilterRules(QStringLiteral("qt.modbus* = true"));
+    QLoggingCategory::setFilterRules(QStringLiteral("qt.modbus* = true"));
 
 	QTranslator qtTranslator;
 	qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));

@@ -1,5 +1,6 @@
 //    Arduino PPM Generator
 //    Copyright (C) 2015-2016  Alexandr Kolodkin <alexandr.kolodkin@gmail.com>
+//    Changed by SilentResonance
 //
 //    This program is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -13,10 +14,13 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+#include <SoftwareSerial.h>
 #include "SimpleModbusSlave.h"
+#include "PXX/src/pxx.h"
 
 SimpleModbusSlave slave(1);
+SoftwareSerial mySerial(2, 3); //RX, TX
+SoftwareSerial debugSerial(4, 5); //RX, TX
 
 // Maximum number of channels
 #define MAX_COUNT 16     
@@ -58,26 +62,16 @@ volatile byte current = 0;    // Current channel number
 //byte const modbus_registers_count = sizeof(regs_t) / sizeof(word);
 uint16_t const modbus_registers_count = sizeof(regs_t) / sizeof(uint16_t);
 
-word modbus_get_register(word id) {
-  return tmp.raw[id];
-}
-
-void modbus_set_register(word id, word value) {
-  digitalWrite(9, HIGH);
-  if (id > 1) tmp.raw[id] = value;
-
-//  Serial.println(id);
-//  Serial.println(value);  
-  
-  digitalWrite(9, LOW);
-}
-
 // Controller initialization
 void setup() {
   // Peripheral initialization
   pinMode(9, OUTPUT);         // Debug
   pinMode(10, OUTPUT);        // PPM
   digitalWrite(10, HIGH);
+
+  debugSerial.begin(125000);
+  debugSerial.println("Hello World!");
+  PXX.begin();
 
   // Initializing Channel Values
   tmp.state        = 0;
@@ -99,28 +93,24 @@ void setup() {
 
 
   // Настраиваем MODBUS
-  //modbus_start();
   slave.setup(115200); 
-  
-//  Serial.println(tmp.state);
-//  Serial.println(tmp.count);
-//  Serial.println(tmp.pause);
-//  Serial.println(tmp.sync.low);
-//  Serial.println(tmp.sync.high);
-//  Serial.println(tmp.sync.raw);
-//  for (byte i = 0; i < MAX_COUNT; i++) {
-//    Serial.println(tmp.channel[i]);
-//  }
 }
 
 // Main loop
 void loop() {
   word lastState = tmp.state;
-  //modbus_update();
   slave.loop(tmp.raw, modbus_registers_count);
-  if (lastState != tmp.state) {
-    tmp.state > 0 ? Start() : Stop();
-  }
+  //if (lastState != tmp.state) {
+    //tmp.state > 0 ? Start() : Stop();
+    if(tmp.state > 0) {
+//      for(int i = 0; i < MAX_COUNT; i++){
+//        debugSerial.print(tmp.channel[i],DEC);
+//      }
+//      debugSerial.println("");
+      PXX.prepare(tmp.channel);
+      PXX.send();
+    }
+  //}
 }
 
 // Run generation

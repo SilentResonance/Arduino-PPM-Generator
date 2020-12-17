@@ -67,8 +67,9 @@ void ppm::update()
 
 			int index = 5;
 			for (int i = 0; i < mChannel.count(); i++) {
-				auto channel = uint16_t((mMinimum + mChannel[i] * (mMaximum - mMinimum) / 100) * mQuant);
-				sync -= uint32_t(channel);
+                //auto channel = uint16_t((mMinimum + mChannel[i] * (mMaximum - mMinimum) / 100) * mQuant);
+                auto channel = uint16_t(mChannel[i]);
+                //sync -= uint32_t(channel);
 				request.setValue(index++, channel);
 				if (sync < minSync) {
 					qDebug() << "sync2small" << sync << minSync;
@@ -117,13 +118,22 @@ void ppm::setChannelsCount(int count)
 	update();
 }
 
-// Set channel value in %
+//// Set channel value in %
+//void ppm::setChanelValue(int chanel, double value)
+//{
+//	if ((chanel >= 0) && (chanel < mChannel.count())) {
+//		mChannel[chanel] = qBound(0.0, value, 100.0);
+//		update();
+//	}
+//}
+
+// Set channel value in RAW 0 to 2047
 void ppm::setChanelValue(int chanel, double value)
 {
-	if ((chanel >= 0) && (chanel < mChannel.count())) {
-		mChannel[chanel] = qBound(0.0, value, 100.0);
-		update();
-	}
+    if ((chanel >= 0) && (chanel < mChannel.count())) {
+        mChannel[chanel] = qBound(0.0, value, 2047.0);
+        update();
+    }
 }
 
 void ppm::readQuant()

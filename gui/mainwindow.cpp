@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 	, isFirmwareUploadingRequested(false)
 {
 	mClient = new QModbusRtuSerialMaster();
-	mClient->setNumberOfRetries(1);
+    mClient->setNumberOfRetries(2);
 
 	devise.setModbusClient(mClient);
 
@@ -78,21 +78,21 @@ MainWindow::MainWindow(QWidget *parent)
 //		}
 //	});
 
-//	connect(&devise, &ppm::deviceConnectionFailed, this, [this] {
-//		QMessageBox message(this);
-//		message.setIconPixmap(QPixmap(":/icons/error.svg"));
-//		message.setText(tr("The device does not respond."));
-//		message.setInformativeText(tr("Try to update the firmware?"));
-//		message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-//		if (message.exec() == QMessageBox::Yes) {
-//			if (mClient->state() != QModbusClient::UnconnectedState) {
+    connect(&devise, &ppm::deviceConnectionFailed, this, [this] {
+        QMessageBox message(this);
+        message.setIconPixmap(QPixmap(":/icons/error.svg"));
+        message.setText(tr("The device does not respond."));
+        message.setInformativeText(tr("Try to update the firmware?"));
+        message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        if (message.exec() == QMessageBox::Yes) {
+            if (mClient->state() != QModbusClient::UnconnectedState) {
 //				isFirmwareUploadingRequested = true;
-//				mClient->disconnectDevice();
-//			} else {
-//				uploadFirmware();
-//			}
-//		}
-//	});
+                mClient->disconnectDevice();
+            } else {
+//                uploadFirmware();
+            }
+        }
+    });
 
 	connect(inputConnect, &QPushButton::clicked, this, [this] {
 		if (mClient->state() == QModbusDevice::ConnectedState) {
@@ -295,12 +295,12 @@ void MainWindow::setupChannelsUi(int count)
 
 		widgets->slider  = new QSlider(Qt::Horizontal, centralWidget);
 		widgets->slider->setTickPosition(QSlider::TicksBothSides);
-		widgets->slider->setRange(0, 1000);
-		widgets->slider->setTickInterval(100);
+        widgets->slider->setRange(0, 2047);
+        widgets->slider->setTickInterval(128);
 		widgets->slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 		widgets->spinBox = new QDoubleSpinBox(centralWidget);
-		widgets->spinBox->setMaximum(100);
+        widgets->spinBox->setMaximum(2047);
 		widgets->spinBox->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 		widgets->spinBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
@@ -309,14 +309,14 @@ void MainWindow::setupChannelsUi(int count)
 		widgets->bind->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
 		connect(widgets->spinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [this, index] (double value) {
-			channels[index]->slider->setValue(int(value * 10));
+            channels[index]->slider->setValue(int(value));
 			devise.setChanelValue(index, value);
 			updateSyncPulseValue();
 			drawPlot();
 		});
 
 		connect(widgets->slider, &QSlider::valueChanged, this, [this, index] (int value) {
-			channels[index]->spinBox->setValue(double(value) / 10);
+            channels[index]->spinBox->setValue(double(value));
 		});
 
         // Location of widgets
@@ -515,7 +515,7 @@ void MainWindow::updateSyncPulseValue()
     double max     = (double) inputMaximum->value(); // Maximum pulse and slot time of the channel, ms
 
 	foreach (auto *channel, channels) {
-		sync -= (double) channel->spinBox->value() * (max - min) / 100 + min;
+        sync -= (double) channel->spinBox->value();// * (max - min) / 100 + min;
 	}
 
 	outputSyncPulse->setMaximum(sync);

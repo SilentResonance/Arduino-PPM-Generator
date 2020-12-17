@@ -91,7 +91,7 @@ private:
     double mMaximum;          // in ms
     double mPause;            // in ms
     double mPeriod;           // in ms
-    QVector<double> mChannel; // in % of (mMaximum - mMinimum)
+    QVector<double> mChannel; // in RAW value 0 - 2047
 };
 
 #endif // PPM_H
