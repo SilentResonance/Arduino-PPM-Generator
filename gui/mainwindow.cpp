@@ -258,24 +258,24 @@ void MainWindow::setupUi()
 	gridLayout->addWidget(labelPause         , 4, 0, 1, 1);
 	gridLayout->addWidget(labelMinimum       , 5, 0, 1, 1);
 	gridLayout->addWidget(labelMaximum       , 6, 0, 1, 1);
-	gridLayout->addWidget(chartView          , 7, 0, 1, 4);
+    gridLayout->addWidget(chartView          , 7, 0, 1, 6);
 
 	gridLayout->addWidget(labelSyncPulse     , 8, 0, 1, 1);
 
 	gridLayout->addWidget(inputPort          , 0, 1, 1, 1);
 	gridLayout->addWidget(inputSpeed         , 1, 1, 1, 1);
-	gridLayout->addWidget(inputChannelsCount , 2, 1, 1, 3);
-	gridLayout->addWidget(inputPeriod        , 3, 1, 1, 3);
-	gridLayout->addWidget(inputPause         , 4, 1, 1, 3);
-	gridLayout->addWidget(inputMinimum       , 5, 1, 1, 3);
-	gridLayout->addWidget(inputMaximum       , 6, 1, 1, 3);
-	gridLayout->addWidget(outputSyncPulse    , 8, 1, 1, 3);
+    gridLayout->addWidget(inputChannelsCount , 2, 1, 1, 5);
+    gridLayout->addWidget(inputPeriod        , 3, 1, 1, 5);
+    gridLayout->addWidget(inputPause         , 4, 1, 1, 5);
+    gridLayout->addWidget(inputMinimum       , 5, 1, 1, 5);
+    gridLayout->addWidget(inputMaximum       , 6, 1, 1, 5);
+    gridLayout->addWidget(outputSyncPulse    , 8, 1, 1, 5);
 
-	gridLayout->addWidget(inputUpdatePorts   , 0, 2, 1, 1);
-	gridLayout->addWidget(inputConnect       , 1, 2, 1, 1);
+    gridLayout->addWidget(inputUpdatePorts   , 0, 4, 1, 1);
+    gridLayout->addWidget(inputConnect       , 1, 4, 1, 1);
 
-	gridLayout->addWidget(inputStartStop     , 0, 3, 1, 1);
-	gridLayout->addWidget(inputInversion     , 1, 3, 1, 1);
+    gridLayout->addWidget(inputStartStop     , 0, 5, 1, 1);
+    gridLayout->addWidget(inputInversion     , 1, 5, 1, 1);
 
 //	gridLayout->setColumnMinimumWidth(2, 150);
 //	gridLayout->setColumnMinimumWidth(3, 150);
@@ -290,23 +290,40 @@ void MainWindow::setupChannelsUi(int count)
 		TChannelWidgets *widgets = new TChannelWidgets;
 
 		widgets->label   = new QLabel(centralWidget);
-		widgets->label->setText(tr("Channel #%1, %:").arg(channels.count()));
+        widgets->label->setText(tr("Channel #%1, %:").arg(channels.count() + 1));
 		widgets->label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
 		widgets->slider  = new QSlider(Qt::Horizontal, centralWidget);
 		widgets->slider->setTickPosition(QSlider::TicksBothSides);
-        widgets->slider->setRange(0, 2047);
+        widgets->slider->setRange(CHAN_MIN, CHAN_MAX);
         widgets->slider->setTickInterval(128);
 		widgets->slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 		widgets->spinBox = new QDoubleSpinBox(centralWidget);
-        widgets->spinBox->setMaximum(2047);
+        widgets->spinBox->setMinimum(CHAN_MIN);
+        widgets->spinBox->setMaximum(CHAN_MAX);
 		widgets->spinBox->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 		widgets->spinBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-		widgets->bind = new QPushButton(centralWidget);
-		widgets->bind->setText(tr("Bind"));
-		widgets->bind->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        widgets->low = new QPushButton(centralWidget);
+        widgets->low->setText(tr("Min"));
+        widgets->low->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+        widgets->mid = new QPushButton(centralWidget);
+        widgets->mid->setText(tr("Mid"));
+        widgets->mid->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+        widgets->high = new QPushButton(centralWidget);
+        widgets->high->setText(tr("Max"));
+        widgets->high->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+        widgets->toggle = new QCheckBox(centralWidget);
+        widgets->toggle->setText(tr("Toggle Min/Max"));
+        widgets->toggle->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+
+//		widgets->bind = new QPushButton(centralWidget);
+//		widgets->bind->setText(tr("Bind"));
+//		widgets->bind->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
 		connect(widgets->spinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, [this, index] (double value) {
             channels[index]->slider->setValue(int(value));
@@ -319,11 +336,52 @@ void MainWindow::setupChannelsUi(int count)
             channels[index]->spinBox->setValue(double(value));
 		});
 
+        connect(widgets->low, &QPushButton::released, this, [this, index] {
+            if(channels[index]->toggle->isChecked()) {
+                channels[index]->slider->setValue(double(TOGGLE_MID));
+            } else {
+                channels[index]->slider->setValue(double(TOGGLE_MIN));
+            }
+        });
+        connect(widgets->low, &QPushButton::pressed, this, [this, index] {
+            if(channels[index]->toggle->isChecked()) {
+                channels[index]->slider->setValue(double(TOGGLE_MIN));
+            }
+        });
+        connect(widgets->mid, &QPushButton::released, this, [this, index] {
+            if(channels[index]->toggle->isChecked()) {
+                channels[index]->slider->setValue(double(TOGGLE_MID));
+            } else {
+                channels[index]->slider->setValue(double(TOGGLE_MID));
+            }
+        });
+        connect(widgets->high, &QPushButton::released, this, [this, index] {
+            if(channels[index]->toggle->isChecked()) {
+                channels[index]->slider->setValue(double(TOGGLE_MID));
+            } else {
+                channels[index]->slider->setValue(double(TOGGLE_MAX));
+            }
+        });
+        connect(widgets->high, &QPushButton::pressed, this, [this, index] {
+            if(channels[index]->toggle->isChecked()) {
+                channels[index]->slider->setValue(double(TOGGLE_MAX));
+            }
+        });
+        connect(widgets->toggle, &QCheckBox::toggled, this, [this, index] {
+            if(channels[index]->toggle->isChecked()) {
+                channels[index]->slider->setValue(double(TOGGLE_MID));
+            }
+        });
+
         // Location of widgets
 		gridLayout->addWidget(widgets->label   , 9 + channels.count(), 0, 1, 1);
 		gridLayout->addWidget(widgets->slider  , 9 + channels.count(), 1, 1, 1);
 		gridLayout->addWidget(widgets->spinBox , 9 + channels.count(), 2, 1, 1);
-		gridLayout->addWidget(widgets->bind    , 9 + channels.count(), 3, 1, 1);
+        gridLayout->addWidget(widgets->low     , 9 + channels.count(), 3, 1, 1);
+        gridLayout->addWidget(widgets->mid     , 9 + channels.count(), 4, 1, 1);
+        gridLayout->addWidget(widgets->high    , 9 + channels.count(), 5, 1, 1);
+        gridLayout->addWidget(widgets->toggle    , 9 + channels.count(), 6, 1, 1);
+        //gridLayout->addWidget(widgets->bind    , 9 + channels.count(), 3, 1, 1);
 
 		channels.append(widgets);
 	}
@@ -336,12 +394,20 @@ void MainWindow::setupChannelsUi(int count)
 		gridLayout->removeWidget(widgets->label);
 		gridLayout->removeWidget(widgets->slider);
 		gridLayout->removeWidget(widgets->spinBox);
-		gridLayout->removeWidget(widgets->bind);
+        gridLayout->removeWidget(widgets->low);
+        gridLayout->removeWidget(widgets->mid);
+        gridLayout->removeWidget(widgets->high);
+        gridLayout->removeWidget(widgets->toggle);
+        //gridLayout->removeWidget(widgets->bind);
 
 		delete widgets->label;
 		delete widgets->slider;
 		delete widgets->spinBox;
-		delete widgets->bind;
+        delete widgets->low;
+        delete widgets->mid;
+        delete widgets->high;
+        delete widgets->toggle;
+        //delete widgets->bind;
 	}
 
 	drawPlot();

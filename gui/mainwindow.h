@@ -56,11 +56,21 @@
 #include <windows.h> // for Sleep
 #endif
 
+#define CHAN_MIN 352
+#define CHAN_MID 1024
+#define CHAN_MAX 1743
+#define TOGGLE_MIN 352
+#define TOGGLE_MID 1024
+#define TOGGLE_MAX 1743
+
 typedef struct {
 	QLabel         *label;
 	QSlider        *slider;
 	QDoubleSpinBox *spinBox;
-	QPushButton    *bind;
+    QPushButton    *low;
+    QPushButton    *mid;
+    QPushButton    *high;
+    QCheckBox      *toggle;
 } TChannelWidgets;
 
 class MainWindow : public QMainWindow
