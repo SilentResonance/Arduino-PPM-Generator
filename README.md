@@ -29,7 +29,8 @@ All code presented here is WORK IN PROGRESS!
     * Original branch from https://github.com/kolod/Arduino-PPM-Generator
 * **sbus_test** 
     * <span style="color:green">Working</span> with direct Arduino Mega &rarr; inverter &rarr; BMMCC extension port S.Bus (all at 5V)
-    * Adapted GUI with limited (non-percent) value range according to [Blackmagic Micro Studio Camera Manual](https://documents.blackmagicdesign.com/UserManuals/BlackmagicStudioCameraManual.pdf) chapter "Remote Settings" page 26.
+    * Adapted GUI with limited (non-percent) value range according to [Blackmagic Micro Studio Camera Manual](https://documents.blackmagicdesign.com/UserManuals/BlackmagicStudioCameraManual.pdf) chapter "Remote Settings" page 26 
+        > :warning: The mentioned value range 44 to 212 needs to be multiplyed by 8 in order to fit 11 Bit precision of S.Bus. They seem to have mapped to 8 Bit precision here...
     * :black_square_button: Needs GUI/code cleanup
     
 * **pxx_test** 
@@ -54,12 +55,12 @@ All code presented here is WORK IN PROGRESS!
 
 ## Tested environments
 ### Software
-* Qt 5.13.0 on Windows 10 (not working, see Prelude)
- *  Arduino IDE 1.8.9
-* Qt 5.13.0 on Ubuntu Mate 18.04 on Virtualbox (not working, see Prelude)
+* Qt 5.13.0 on Windows 10 (working with newer [SimpleModbusSlave library](https://github.com/kolod/Arduino-Simple-Modbus-Slave/))
+*  Arduino IDE 1.8.9
+* Qt 5.13.0 on Ubuntu Mate 18.04 on Virtualbox (not tested, see Prelude)
 
 ### Hardware
-* Arduino Uno R3 SMD Edition
+* Arduino Mega 2560
 * S.Bus might require second hardware serial, so Arduino Mega 2560 was used here
 * FrSky XJT sender module
 * FrSky XM Plus receiver module
