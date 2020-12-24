@@ -1,0 +1,24 @@
+{
+    "type":"device",
+    "brand":"Noname",
+    "name":"Default 16 channel S.Bus",
+    "protocols": ["SBUS"],
+    "channels":[
+        {"id":1,"name":"Channel 1","type":"values","min":0,"max":2047},
+        {"id":2,"name":"Channel 2","type":"values","min":0,"max":2047},
+        {"id":3,"name":"Channel 3","type":"values","min":0,"max":2047},
+        {"id":4,"name":"Channel 4","type":"values","min":0,"max":2047},
+        {"id":5,"name":"Channel 5","type":"values","min":0,"max":2047},
+        {"id":6,"name":"Channel 6","type":"values","min":0,"max":2047},
+        {"id":7,"name":"Channel 7","type":"values","min":0,"max":2047},
+        {"id":8,"name":"Channel 8","type":"values","min":0,"max":2047},
+        {"id":9,"name":"Channel 9","type":"values","min":0,"max":2047},
+        {"id":10,"name":"Channel 10","type":"values","min":0,"max":2047},
+        {"id":11,"name":"Channel 11","type":"values","min":0,"max":2047},
+        {"id":12,"name":"Channel 12","type":"values","min":0,"max":2047},
+        {"id":13,"name":"Channel 13","type":"values","min":0,"max":2047},
+        {"id":14,"name":"Channel 14","type":"values","min":0,"max":2047},
+        {"id":15,"name":"Channel 15","type":"values","min":0,"max":2047},
+        {"id":16,"name":"Channel 16","type":"values","min":0,"max":2047}
+    ]
+}

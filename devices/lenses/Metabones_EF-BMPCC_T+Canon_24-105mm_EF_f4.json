@@ -1,0 +1,39 @@
+{
+    "type":"lens",
+    "brand":"Metabones",
+    "name":"EF-BMPCC T + Canon EF 24-105mm f4 IS USM",
+    "mount":"EF",
+    "iris":[
+        {"id":1,"value":2.4,"raw":387},
+        {"id":2,"value":2.6,"raw":455},
+        {"id":3,"value":2.8,"raw":523},
+        {"id":4,"value":3.2,"raw":591},
+        {"id":5,"value":3.5,"raw":655},
+        {"id":6,"value":3.7,"raw":723},
+        {"id":7,"value":4.0,"raw":791},
+        {"id":8,"value":4.5,"raw":859},
+        {"id":9,"value":4.8,"raw":927},
+        {"id":10,"value":5.2,"raw":991},
+        {"id":11,"value":5.6,"raw":1059},
+        {"id":12,"value":6.2,"raw":1127},
+        {"id":13,"value":6.7,"raw":1195},
+        {"id":14,"value":7.3,"raw":1263},
+        {"id":15,"value":8.0,"raw":1327},
+        {"id":16,"value":8.7,"raw":1395},
+        {"id":17,"value":9.5,"raw":1463},
+        {"id":18,"value":10.0,"raw":1531},
+        {"id":19,"value":11.0,"raw":1599},
+        {"id":20,"value":12.0,"raw":1663},
+        {"id":21,"value":14.0,"raw":1719}
+        ],
+    "zoom":[],
+    "focus":[
+        {"value":"\u221E","unit":"","raw":352},
+        {"value":"5","unit":"m","raw":664},
+        {"value":"3","unit":"m","raw":757},
+        {"value":"1.5","unit":"m","raw":1014},
+        {"value":"1","unit":"m","raw":1200},
+        {"value":"0.7","unit":"m","raw":1425},
+        {"value":"Macro","unit":"","raw":1740}
+    ]
+}

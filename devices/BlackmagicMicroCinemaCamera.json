@@ -1,0 +1,41 @@
+{
+    "type":"camera",
+    "brand":"Blackmagic Design",
+    "name":"Micro Cinema Camera",
+    "protocols": ["SBUS","LANC"],
+    "mount":"MFT",
+    "channels":[
+        {"id":1,"name":"Record","type":"toggle"},
+        {"id":2,"name":"Iris","type":"values","min":352,"max":1743},
+        {"id":3,"name":"Focus","type":"values","min":352,"max":1743},
+        {"id":4,"name":"Auto Focus","type":"toggle"},
+        {"id":5,"name":"Zoom","type":"values","min":352,"max":1743},
+        {"id":6,"name":"ISO","type":"toggle"},
+        {"id":7,"name":"Shutter Angle","type":"toggle"},
+        {"id":8,"name":"White Balance","type":"toggle"},
+        {"id":9,"name":"Audio Levels","type":"values","min":352,"max":1743},
+        {"id":10,"name":"Frame Rate","type":"values","min":352,"max":1743},
+        {"id":11,"name":"Codec","type":"values","min":352,"max":1743}
+    ],
+    "audio":[
+        {"range":"0:100","unit":"%"}
+    ],
+    "fps":[
+        {"name":"23.98 fps","raw":352},
+        {"name":"24 fps","raw":538},
+        {"name":"25 fps","raw":703},
+        {"name":"29.97 fps","raw":874},
+        {"name":"30 fps","raw":1033},
+        {"name":"50 fps","raw":1207},
+        {"name":"59.94 fps","raw":1376},
+        {"name":"60 fps","raw":1550}
+    ],
+    "codecs":[
+        {"name":"RAW","raw":550},
+        {"name":"RAW 3:1","raw":800},
+        {"name":"ProRes HQ","raw":1015},
+        {"name":"ProRes 422","raw":1255},
+        {"name":"ProRes LT","raw":1300},
+        {"name":"ProRes Proxy","raw":1495}
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "type":"lens",
+    "brand":"Canon",
+    "name":"50mm f1.4 USM",
+    "mount":"EF",
+    "iris":[
+        {"id":1,"value":1.4,"raw":375},
+        {"id":4,"value":1.8,"raw":499},
+        {"id":5,"value":2.0,"raw":543},
+        {"id":8,"value":2.5,"raw":667},
+        {"id":9,"value":2.8,"raw":711},
+        {"id":11,"value":3.5,"raw":795},
+        {"id":13,"value":4.0,"raw":879},
+        {"id":14,"value":4.5,"raw":923},
+        {"id":17,"value":5.6,"raw":1047},
+        {"id":19,"value":6.7,"raw":1131},
+        {"id":21,"value":8.0,"raw":1215},
+        {"id":23,"value":9.5,"raw":1299},
+        {"id":25,"value":11.0,"raw":1383},
+        {"id":26,"value":13.0,"raw":1427},
+        {"id":29,"value":16.0,"raw":1551},
+        {"id":31,"value":19.0,"raw":1635},
+        {"id":33,"value":22.0,"raw":1719}
+        ],
+    "zoom":[],
+    "focus":[
+        {"value":"\u221E","unit":"","raw":352},
+        {"value":"3","unit":"m","raw":517},
+        {"value":"1.5","unit":"m","raw":664},
+        {"value":"1","unit":"m","raw":805},
+        {"value":"0.8","unit":"m","raw":922},
+        {"value":"0.6","unit":"m","raw":1144},
+        {"value":"0.45","unit":"m","raw":1468}
+    ]
+}
