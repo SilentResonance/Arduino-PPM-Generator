@@ -122,25 +122,25 @@ MainWindow::MainWindow(QWidget *parent)
 		inputStartStop->setDisabled(true);
 	});
 
-	connect(&devise, &ppm::maxPulseLengthChanged, inputMaximum, &QDoubleSpinBox::setMaximum);
+//	connect(&devise, &ppm::maxPulseLengthChanged, inputMaximum, &QDoubleSpinBox::setMaximum);
 
     connect(chartView->chart(), SIGNAL(widthChanged()), this, SLOT(xAxisUpdate()));
 
 	connect(inputChannelsCount, SIGNAL(valueChanged(int)),    &devise, SLOT(setChannelsCount(int)));
-    connect(inputPeriod,        SIGNAL(valueChanged(double)), &devise, SLOT(setPeriod(double)));
-    connect(inputPause,         SIGNAL(valueChanged(double)), &devise, SLOT(setPause(double)));
-    connect(inputMinimum,       SIGNAL(valueChanged(double)), &devise, SLOT(setMinimum(double)));
-    connect(inputMaximum,       SIGNAL(valueChanged(double)), &devise, SLOT(setMaximum(double)));
+//    connect(inputPeriod,        SIGNAL(valueChanged(double)), &devise, SLOT(setPeriod(double)));
+//    connect(inputPause,         SIGNAL(valueChanged(double)), &devise, SLOT(setPause(double)));
+//    connect(inputMinimum,       SIGNAL(valueChanged(double)), &devise, SLOT(setMinimum(double)));
+//    connect(inputMaximum,       SIGNAL(valueChanged(double)), &devise, SLOT(setMaximum(double)));
 
     // Updating the chart
-    connect(inputPeriod,        SIGNAL(valueChanged(double)), SLOT(drawPlot()));
-    connect(inputPause,         SIGNAL(valueChanged(double)), SLOT(drawPlot()));
-    connect(inputMinimum,       SIGNAL(valueChanged(double)), SLOT(drawPlot()));
-    connect(inputMaximum,       SIGNAL(valueChanged(double)), SLOT(drawPlot()));
+//    connect(inputPeriod,        SIGNAL(valueChanged(double)), SLOT(drawPlot()));
+//    connect(inputPause,         SIGNAL(valueChanged(double)), SLOT(drawPlot()));
+//    connect(inputMinimum,       SIGNAL(valueChanged(double)), SLOT(drawPlot()));
+//    connect(inputMaximum,       SIGNAL(valueChanged(double)), SLOT(drawPlot()));
 
     // Checking the correctness of the parameters affecting the pause duration
-    connect(inputPeriod,        SIGNAL(valueChanged(double)), SLOT(check()));
-    connect(inputMaximum,       SIGNAL(valueChanged(double)), SLOT(check()));
+//    connect(inputPeriod,        SIGNAL(valueChanged(double)), SLOT(check()));
+//    connect(inputMaximum,       SIGNAL(valueChanged(double)), SLOT(check()));
 	connect(inputChannelsCount, SIGNAL(valueChanged(int)),    SLOT(check()));
 
 	connect(inputUpdatePorts,   SIGNAL(clicked()),            SLOT(enumeratePorts()));
@@ -188,6 +188,7 @@ void MainWindow::setupUi()
 
     // Inversion of PPM signal
     inputInversion     = new QCheckBox(centralWidget);
+    inputInversion->setVisible(false);
 
     // Input channel quantity
 	labelChannelsCount = new QLabel(centralWidget);
@@ -202,6 +203,8 @@ void MainWindow::setupUi()
     inputPeriod->setMinimum(0.0);
     inputPeriod->setMaximum(100.0);
     inputPeriod->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    labelPeriod->setVisible(false);
+    inputPeriod->setVisible(false);
 
     // Input pause duration (milliseconds)
     labelPause         = new QLabel(centralWidget);
@@ -209,6 +212,8 @@ void MainWindow::setupUi()
     inputPause->setMinimum(0.0);
     inputPause->setMaximum(10.0);
     inputPause->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    labelPause->setVisible(false);
+    inputPause->setVisible(false);
 
     // Input minimum duration (milliseconds)
     labelMinimum       = new QLabel(centralWidget);
@@ -216,6 +221,8 @@ void MainWindow::setupUi()
     inputMinimum->setMinimum(0.0);
     inputMinimum->setMaximum(10.0);
     inputMinimum->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    inputMinimum->setVisible(false);
+    labelMinimum->setVisible(false);
 
     // Input maximum duration (milliseconds)
     labelMaximum       = new QLabel(centralWidget);
@@ -223,6 +230,8 @@ void MainWindow::setupUi()
     inputMaximum->setMinimum(0.0);
     inputMaximum->setMaximum(10.0);
     inputMaximum->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    labelMaximum->setVisible(false);
+    inputMaximum->setVisible(false);
 
     // Graph
     line               = new QtCharts::QLineSeries;
@@ -275,7 +284,7 @@ void MainWindow::setupUi()
     gridLayout->addWidget(inputConnect       , 1, 4, 1, 1);
 
     gridLayout->addWidget(inputStartStop     , 0, 5, 1, 1);
-//    gridLayout->addWidget(inputInversion     , 1, 5, 1, 1);
+    gridLayout->addWidget(inputInversion     , 1, 5, 1, 1);
 
 //	gridLayout->setColumnMinimumWidth(2, 150);
 //	gridLayout->setColumnMinimumWidth(3, 150);
@@ -487,8 +496,17 @@ void MainWindow::saveSession()
 	foreach (auto channel, channels) {
 		values.append(QString("%1").arg(channel->spinBox->value()));
 	}
+    QStringList toggles;
+    foreach (auto channel, channels) {
+        if(channel->toggle->isChecked()){
+            toggles.append(QString("%1").arg(Qt::Checked));
+        } else {
+            toggles.append(QString("%1").arg(Qt::Unchecked));
+        }
+    }
 
 	settings.setValue("values", values.join(";"));
+    settings.setValue("toggles", toggles.join(";"));
 }
 
 void MainWindow::restoreSession()
@@ -510,6 +528,14 @@ void MainWindow::restoreSession()
 	for (int i = 0; i < values.count(); ++i) {
 		channels[i]->spinBox->setValue(values[i].toDouble());
 	}
+    QStringList toggles = settings.value("toggles").toString().split(";");
+    for (int i = 0; i < toggles.count(); ++i) {
+        if(toggles[i].toDouble()){
+            channels[i]->toggle->setCheckState(Qt::Checked);
+        } else {
+            channels[i]->toggle->setCheckState(Qt::Unchecked);
+        }
+    }
 
     drawPlot();
 }

@@ -19,12 +19,23 @@ TARGET    = ppm-generator
 TEMPLATE  = app
 
 SOURCES += \
+	cameraclass.cpp \
+	configreader.cpp \
+	deviceclass.cpp \
+	json_configreader.cpp \
+	lensclass.cpp \
 	main.cpp\
 	mainwindow.cpp \
 	ppm.cpp \
 	loader.cpp
 
 HEADERS  += \
+	cameraclass.h \
+	configreader.h \
+	deviceclass.h \
+	global.h \
+	json_configreader.h \
+	lensclass.h \
 	mainwindow.h \
 	ppm.h \
 	loader.h

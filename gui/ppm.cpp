@@ -53,11 +53,11 @@ void ppm::update()
 	if (
 		(mClient != nullptr) &&
 		(mClient->state() == QModbusDevice::ConnectedState) &&
-		(mChannel.count() > 0) &&
-		(mPause > 0) &&
-		(mPause < mMinimum) &&
-		(mMinimum > 0) &&
-		(mMinimum < mMaximum)
+        (mChannel.count() > 0)// &&
+//		(mPause > 0) &&
+//		(mPause < mMinimum) &&
+//		(mMinimum > 0) &&
+//		(mMinimum < mMaximum)
 	) {
 		if (mQuant > 0) {
 
@@ -71,11 +71,11 @@ void ppm::update()
                 auto channel = uint16_t(mChannel[i]);
                 //sync -= uint32_t(channel);
 				request.setValue(index++, channel);
-				if (sync < minSync) {
-					qDebug() << "sync2small" << sync << minSync;
-					emit sync2small();
-					return;
-				}
+//				if (sync < minSync) {
+//					qDebug() << "sync2small" << sync << minSync;
+//					emit sync2small();
+//					return;
+//				}
 			}
 
 			request.setValue(0, mRun ? mInversion ? 2 : 1 : 0);

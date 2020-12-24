@@ -15,6 +15,7 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mainwindow.h"
+#include "configreader.h"
 #include <QApplication>
 #include <QStyleFactory>
 #include <QTranslator>
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName("Silent Resonance (Original by Alexandr Kolodkin)");
 	a.setStyle(QStyleFactory::create("Fusion"));
 
-    QLoggingCategory::setFilterRules(QStringLiteral("qt.modbus* = true"));
+//    QLoggingCategory::setFilterRules(QStringLiteral("qt.modbus* = true"));
 
 	QTranslator qtTranslator;
 	qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
@@ -38,6 +39,9 @@ int main(int argc, char *argv[])
 	QTranslator myTranslator;
     myTranslator.load(":/translations/ppm_de.qm");
 	a.installTranslator(&myTranslator);
+
+    //ConfigReader reader{"../../devices"};
+    //ConfigReader lenses("../../devices/lenses");
 
 	MainWindow w;
 	w.show();
