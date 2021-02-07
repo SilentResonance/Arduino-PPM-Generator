@@ -43,7 +43,7 @@ SimpleModbusSlave slave(1);
 // According to https://documents.blackmagicdesign.com/UserManuals/BlackmagicStudioCameraManual.pdf
 
 // Maximum number of channels
-#define MAX_COUNT SBUS_CHANNEL_NUMBER     
+#define MAX_COUNT SBUS_CHANNEL_NUMBER
 
 enum State {
   Pulse,             // N-th channel pulse
@@ -144,7 +144,7 @@ void setup() {
   pinMode(10, OUTPUT);        // PPM
   digitalWrite(10, HIGH);
 
-  //PXX.begin();
+  PXX.begin();
 
   // Initializing Channel Values
   tmp.state        = 0;
@@ -186,8 +186,8 @@ void loop() {
 //        debugSerial.print(tmp.channel[i],DEC);
 //      }
 //      debugSerial.println("");
-      //PXX.prepare(tmp.channel);
-      //PXX.send();
+      PXX.prepare(tmp.channel);
+      PXX.send();
       
       /*
        * Here you can modify values of rcChannels while keeping it in 1000:2000 range
@@ -197,6 +197,7 @@ void loop() {
           Serial1.write(sbusPacket, SBUS_PACKET_LENGTH);  
           sbusTime = currentMillis + SBUS_UPDATE_RATE;
       }
+      delay(2);
     }
   //}
 }
