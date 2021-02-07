@@ -6,20 +6,20 @@ JSON_configreader::JSON_configreader(QObject *parent) : QObject (parent)
         configDirectory = QCoreApplication::applicationDirPath();
         emit jsonError(tr("JSON: Config directory does not exist. Using default"));
     }
-    qDebug() << configDirectory;
+    //qDebug() << configDirectory;
 }
 
 JSON_configreader::JSON_configreader(QString directory, QObject *parent) : QObject (parent)
 {
     QString absPath = QCoreApplication::applicationDirPath() + "/" + directory;
-    qDebug() << absPath;
+    //qDebug() << absPath;
     if(!QFile::exists(absPath)) {
         configDirectory = QCoreApplication::applicationDirPath() +  "/../../devices";
         emit jsonError(tr("JSON: Config directory does not exist. Using default"));
     } else {
         configDirectory = absPath;
     }
-    qDebug() << configDirectory;
+    //qDebug() << configDirectory;
 }
 
 void JSON_configreader::enumerateJSONFiles(){
@@ -33,7 +33,7 @@ void JSON_configreader::enumerateJSONFiles(){
     }
     foreach (const QString &jsonFile, jsonFilenames){
         QFile configFile(configDirectory + QDir::separator() + jsonFile);
-        qDebug() << jsonFile;
+        //qDebug() << jsonFile;
         configFile.open(QIODevice::ReadOnly);
         QJsonDocument doc;
         doc = QJsonDocument::fromJson(configFile.readAll(), &error);
@@ -61,7 +61,7 @@ void JSON_configreader::enumerateJSONFiles(){
         QVector<TStepStruct> fps;
         QVector<TStepStruct> codecs;
         // Checking device type
-        qDebug() << jObject["type"].toString();
+        //qDebug() << jObject["type"].toString();
         if(jObject["type"].toString().toLower() == "camera"){
             type = DeviceType::Camera;
         } else if (jObject["type"].toString().toLower() == "generic") {
@@ -241,13 +241,6 @@ void JSON_configreader::enumerateJSONFiles(){
         }
     }
     emit foundDevices(devices.size(), cameras.size(), lenses.size());
-}
-
-void JSON_configreader::enumerateJSONFiles(QString subdirectory){
-
-}
-void JSON_configreader::setConfigDirectory(QString path){
-
 }
 
 QVector<DeviceClass> JSON_configreader::getDevices(){
